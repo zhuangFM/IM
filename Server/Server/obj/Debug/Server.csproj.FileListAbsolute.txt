@@ -1,0 +1,36 @@
+c:\users\administrator\documents\visual studio 2012\Projects\Server\Server\bin\Debug\Server.exe.config
+c:\users\administrator\documents\visual studio 2012\Projects\Server\Server\bin\Debug\Server.exe
+c:\users\administrator\documents\visual studio 2012\Projects\Server\Server\bin\Debug\Server.pdb
+c:\users\administrator\documents\visual studio 2012\Projects\Server\Server\obj\Debug\Server.Properties.Resources.resources
+c:\users\administrator\documents\visual studio 2012\Projects\Server\Server\obj\Debug\Server.csproj.GenerateResource.Cache
+c:\users\administrator\documents\visual studio 2012\Projects\Server\Server\obj\Debug\Server.exe
+c:\users\administrator\documents\visual studio 2012\Projects\Server\Server\obj\Debug\Server.pdb
+c:\users\administrator\documents\visual studio 2012\Projects\Server\Server\obj\Debug\Server.ServerForm.resources
+C:\Users\Administrator\Desktop\IM\Server\Server\bin\Debug\Server.exe.config
+C:\Users\Administrator\Desktop\IM\Server\Server\obj\Debug\Server.exe
+C:\Users\Administrator\Desktop\IM\Server\Server\obj\Debug\Server.pdb
+C:\Users\Administrator\Desktop\IM\Server\Server\bin\Debug\Server.exe
+C:\Users\Administrator\Desktop\IM\Server\Server\bin\Debug\Server.pdb
+C:\Users\Administrator\Desktop\IM\Server\Server\obj\Debug\Server.ServerForm.resources
+C:\Users\Administrator\Desktop\IM\Server\Server\obj\Debug\Server.Properties.Resources.resources
+C:\Users\Administrator\Desktop\IM\Server\Server\obj\Debug\Server.csproj.GenerateResource.Cache
+E:\setup_package\IM\IM\Server\Server\bin\Debug\Server.exe.config
+E:\setup_package\IM\IM\Server\Server\bin\Debug\Server.exe
+E:\setup_package\IM\IM\Server\Server\bin\Debug\Server.pdb
+E:\setup_package\IM\IM\Server\Server\obj\Debug\Server.csprojAssemblyReference.cache
+E:\setup_package\IM\IM\Server\Server\obj\Debug\Server.ServerForm.resources
+E:\setup_package\IM\IM\Server\Server\obj\Debug\Server.Properties.Resources.resources
+E:\setup_package\IM\IM\Server\Server\obj\Debug\Server.csproj.GenerateResource.cache
+E:\setup_package\IM\IM\Server\Server\obj\Debug\Server.csproj.CoreCompileInputs.cache
+E:\setup_package\IM\IM\Server\Server\obj\Debug\Server.exe
+E:\setup_package\IM\IM\Server\Server\obj\Debug\Server.pdb
+G:\workspace_vs\IM\Server\Server\bin\Debug\Server.exe.config
+G:\workspace_vs\IM\Server\Server\bin\Debug\Server.exe
+G:\workspace_vs\IM\Server\Server\bin\Debug\Server.pdb
+G:\workspace_vs\IM\Server\Server\obj\Debug\Server.csprojAssemblyReference.cache
+G:\workspace_vs\IM\Server\Server\obj\Debug\Server.ServerForm.resources
+G:\workspace_vs\IM\Server\Server\obj\Debug\Server.Properties.Resources.resources
+G:\workspace_vs\IM\Server\Server\obj\Debug\Server.csproj.GenerateResource.cache
+G:\workspace_vs\IM\Server\Server\obj\Debug\Server.csproj.CoreCompileInputs.cache
+G:\workspace_vs\IM\Server\Server\obj\Debug\Server.exe
+G:\workspace_vs\IM\Server\Server\obj\Debug\Server.pdb
