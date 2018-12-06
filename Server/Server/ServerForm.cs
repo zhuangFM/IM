@@ -140,7 +140,8 @@ namespace Server
                             for (int i = 0; i < userList.Count; i++)
                             {
                                 // 广播注销消息
-                                SendtoClient(userList[i], message);
+                                MessageBox.Show("logout 发给 "+ userList[i].GetName());
+                                    SendtoClient(userList[i], message);
                             }
                             AddItemToListBox(string.Format("广播:[{0}]", message));
                             break;
@@ -159,7 +160,7 @@ namespace Server
         private void SendtoClient(User user, string message)
         {
             // 匿名方式发送
-            sendUdpClient = new UdpClient(0);
+            sendUdpClient = new UdpClient();
             byte[] sendBytes = Encoding.Unicode.GetBytes(message);
             IPEndPoint remoteIPEndPoint =user.GetIPEndPoint();
             sendUdpClient.Send(sendBytes,sendBytes.Length,remoteIPEndPoint);

@@ -13,6 +13,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
+using static System.Windows.Forms.ListView;
 
 namespace Client
 {
@@ -69,7 +70,7 @@ namespace Client
 
 
             // 匿名发送
-            sendUdpClient = new UdpClient(0);
+            sendUdpClient = new UdpClient();
             // 启动发送线程
             Thread sendThread = new Thread(SendMessage);
             sendThread.Start(string.Format("login,{0},{1}", txtusername.Text, clientIPEndPoint));
@@ -157,7 +158,7 @@ namespace Client
                             {
                                 for (int i = 0; i < chatFormList.Count; i++)
                                 {
-                                    MessageBox.Show(chatFormList[i].Text);
+                                    //MessageBox.Show(chatFormList[i].Text);
                                     if (chatFormList[i].Text == splitstring[2])
                                     {
                                         chatFormList[i].ShowTalkInfo(splitstring[2], splitstring[1], splitstring[3]);
@@ -190,10 +191,50 @@ namespace Client
                                 }
                             }
                             break;
+                        case "file":
+                            if (chatFormList.Count == 0)
+                            {
+                                
+                                for (int j = 0; j < lstviewOnlineUser.Items.Count; j++)
+                                {
+                                    if (lstviewOnlineUser.Items[j].SubItems[1].Text == splitstring[2])
+                                    {
+                                        //MessageBox.Show(splitstring[2] + "对话框未打开，自动打开接收文件");
+                                        showDialogChatToReceiveFile(lstviewOnlineUser.Items[j]);//打开对话框接收文件
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                for (int i = 0; i < chatFormList.Count; i++)
+                                {
+                                    if (chatFormList[i].Text == splitstring[2])
+                                    {
+                                        //MessageBox.Show(splitstring[2]+"对话框已经打开，接收文件");
+                                        chatFormList[i].ShowTalkInfo(splitstring[2], splitstring[1], splitstring[3]);
+                                        break;
+                                    }
+                                    if (i == chatFormList.Count - 1)
+                                    {
+                                        for (int j = 0; j < lstviewOnlineUser.Items.Count; j++)
+                                        {
+                                            if (lstviewOnlineUser.Items[j].SubItems[1].Text == splitstring[2])
+                                            {
+                                                //MessageBox.Show(splitstring[2] + "对话框未打开，自动打开接收文件");
+                                                showDialogChatToReceiveFile(lstviewOnlineUser.Items[j]);//打开对话框接收文件
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            break;
                     }
                 }
                 catch
                 {
+                    MessageBox.Show("ERROR!");
                     break;
                 }
             }
@@ -208,23 +249,33 @@ namespace Client
                 try
                 {
                     newClient = tcpListener.AcceptTcpClient();
-                    NetworkStream stream = newClient.GetStream();
-                    if (stream != null)
+                    if (newClient.Connected)
                     {
-                        SaveFileDialog saveFileDialog = new SaveFileDialog();
-                        if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        if (MessageBox.Show("是否要接收文件？", "提示", MessageBoxButtons.OKCancel) == System.Windows.Forms.DialogResult.OK)
                         {
-                            string fileSavePath = saveFileDialog.FileName;//获得用户保存文件的路径
-                            FileStream fs = new FileStream(fileSavePath, FileMode.Create, FileAccess.Write);
-                            int size = 0;
-                            byte[] buffer = new byte[512];
-                            while ((size = stream.Read(buffer, 0, buffer.Length)) > 0)
+                            NetworkStream stream = newClient.GetStream();
+                            if (stream != null)
                             {
-                                fs.Write(buffer, 0, size);
+                                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                                if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                                {
+                                    string fileSavePath = saveFileDialog.FileName;//获得用户保存文件的路径
+                                    FileStream fs = new FileStream(fileSavePath, FileMode.Create, FileAccess.Write);
+                                    int size = 0;
+                                    byte[] buffer = new byte[512];
+                                    while ((size = stream.Read(buffer, 0, buffer.Length)) > 0)
+                                    {
+                                        fs.Write(buffer, 0, size);
+                                    }
+                                    fs.Flush();
+                                    stream.Flush();
+                                    stream.Close();
+                                    newClient.Close();
+                                }
                             }
-                            fs.Flush();
-                            stream.Flush();
-                            stream.Close();
+                        }
+                        else
+                        {
                             newClient.Close();
                         }
                     }
@@ -320,7 +371,7 @@ namespace Client
             }
         }
 
-        // 发送登录请求
+        // 发送登录或者注销请求
         private void SendMessage(object obj)
         {
             string message = (string)obj;
@@ -354,10 +405,10 @@ namespace Client
             {
                 return;
             }
-            lstviewOnlineUser.SelectedItems[0].SubItems[0].Text = "";
+            lstviewOnlineUser.SelectedItems[0].SubItems[0].Text = "";//清空未读消息提示
 
             string ipEndPoint = lstviewOnlineUser.SelectedItems[0].SubItems[2].Text;
-            MessageBox.Show("ipEndPoint : " + ipEndPoint);
+            //MessageBox.Show("ipEndPoint : " + ipEndPoint);
             string[] splitString = ipEndPoint.Split(':');
             IPAddress peerIP = IPAddress.Parse(splitString[0]);
             IPEndPoint peerIPEndPoint = new IPEndPoint(peerIP, int.Parse(splitString[1]));
@@ -374,6 +425,25 @@ namespace Client
                 }
                 unReadMsg[peerName].Clear();
             }
+            dialogChat.FormClosing += closeDialogChat;
+            dialogChat.Show();
+        }
+
+        private void showDialogChatToReceiveFile(ListViewItem electedItem)
+        {
+            string peerName = electedItem.SubItems[1].Text;
+            electedItem.SubItems[0].Text = "";//清空未读消息de提示
+            string ipEndPoint = electedItem.SubItems[2].Text;
+            //MessageBox.Show("ipEndPoint : " + ipEndPoint);
+            string[] splitString = ipEndPoint.Split(':');
+            IPAddress peerIP = IPAddress.Parse(splitString[0]);
+            IPEndPoint peerIPEndPoint = new IPEndPoint(peerIP, int.Parse(splitString[1]));
+            ChatFormcs dialogChat = new ChatFormcs();
+            dialogChat.SetUserInfo(txtusername.Text, peerName, peerIPEndPoint);
+            dialogChat.Text = peerName;
+            chatFormList.Add(dialogChat);
+
+            dialogChat.ShowTalkInfo(peerName, DateTime.Now.ToLongTimeString(), "向你发送了文件");
             dialogChat.FormClosing += closeDialogChat;
             dialogChat.Show();
         }

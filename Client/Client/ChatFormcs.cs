@@ -36,17 +36,17 @@ namespace Client
 
         private void btnSend_Click(object sender, EventArgs e)
         {
-            if(txbSend.Text.Trim() == "")
+            if (txbSend.Text.Trim() == "")
             {
                 MessageBox.Show("空白消息");
                 return;
             }
             // 匿名发送
-            sendUdpClient = new UdpClient(0);
+            sendUdpClient = new UdpClient();
             // 启动发送线程
             Thread sendThread = new Thread(SendMessage);
             sendThread.Start(string.Format("talk,{0},{1},{2}", DateTime.Now.ToLongTimeString(), selfUserName, txbSend.Text));
-            richtxbTalkinfo.AppendText(selfUserName + "    " + DateTime.Now.ToLongTimeString() + Environment.NewLine + txbSend.Text);
+            richtxbTalkinfo.AppendText(selfUserName + "    " + DateTime.Now.ToLongTimeString() + " 说" + Environment.NewLine + txbSend.Text);
             richtxbTalkinfo.AppendText(Environment.NewLine);
             // 将控件内容滚动到当前插入符的位置
             richtxbTalkinfo.ScrollToCaret();
@@ -58,13 +58,13 @@ namespace Client
         {
             string message = (string)obj;
             byte[] sendbytes = Encoding.Unicode.GetBytes(message);
-            sendUdpClient.Send(sendbytes,sendbytes.Length,peerUserIPEndPoint);
+            sendUdpClient.Send(sendbytes, sendbytes.Length, peerUserIPEndPoint);
             sendUdpClient.Close();
         }
 
         public void ShowTalkInfo(string peerName, string time, string content)
         {
-            richtxbTalkinfo.AppendText(peerName + "    " + time+" 说" + Environment.NewLine + content);
+            richtxbTalkinfo.AppendText(peerName + "    " + time + " 说" + Environment.NewLine + content);
             richtxbTalkinfo.AppendText(Environment.NewLine);
             richtxbTalkinfo.ScrollToCaret();
         }
@@ -77,27 +77,33 @@ namespace Client
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             string filePath = "";
-            if(openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 filePath = openFileDialog.FileName;
+                // 匿名发送
+                sendUdpClient = new UdpClient(0);
+                // 启动发送线程
+                Thread sendThread = new Thread(SendMessage);
+                sendThread.Start(string.Format("file,{0},{1},{2}", DateTime.Now.ToLongTimeString(), selfUserName, selfUserName + "向你发送了文件"));
+                //启动TCP发送文件
+                TcpClient tcpClient = new TcpClient();
+                tcpClient.Connect(peerUserIPEndPoint.Address, peerUserIPEndPoint.Port + 1);
+                NetworkStream ns = tcpClient.GetStream();
+                FileStream fs = new FileStream(filePath, FileMode.Open);
+                int size = 0;//初始化读取的流量为0 
+                long len = 0;//初始化已经读取的流量   
+                while (len < fs.Length)
+                {
+                    byte[] buffer = new byte[512];
+                    size = fs.Read(buffer, 0, buffer.Length);
+                    ns.Write(buffer, 0, size);
+                    len += size;
+                }
+                fs.Flush();
+                ns.Flush();
+                fs.Close();
+                ns.Close();
             }
-            TcpClient tcpClient = new TcpClient();
-            tcpClient.Connect(peerUserIPEndPoint.Address,peerUserIPEndPoint.Port+1);
-            NetworkStream ns = tcpClient.GetStream();
-            FileStream fs = new FileStream(filePath, FileMode.Open);
-            int size = 0;//初始化读取的流量为0   
-            long len = 0;//初始化已经读取的流量   
-            while (len < fs.Length)
-            {
-                byte[] buffer = new byte[512];
-                size = fs.Read(buffer, 0, buffer.Length);
-                ns.Write(buffer, 0, size);
-                len += size;
-            }
-            fs.Flush();
-            ns.Flush();
-            fs.Close();
-            ns.Close();
         }
     }
 }
