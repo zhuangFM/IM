@@ -16,12 +16,12 @@ using System.IO;
 
 namespace Server
 {
-   
+
     public partial class ServerForm : Form
     {
         // 保存登录的所有用户
         private List<User> userList = new List<User>();
-        
+
         // 服务器端口
         int port;
 
@@ -51,7 +51,6 @@ namespace Server
         }
 
         // 启动服务器
-        // 根据博客中协议的设计部分
         // 客户端先向服务器发送登录请求，然后通过服务器返回的端口号
         // 再与服务器建立连接
         // 所以启动服务按钮事件中有两个套接字：一个是接收客户端信息套接字和
@@ -79,7 +78,7 @@ namespace Server
             // 启动监听线程
             Thread listenThread = new Thread(ListenClientConnect);
             listenThread.Start();
-            AddItemToListBox(string.Format("服务器线程{0}启动，监听端口{1}",serverIPEndPoint,tcpPort));
+            AddItemToListBox(string.Format("服务器线程{0}启动，监听端口{1}", serverIPEndPoint, tcpPort));
         }
 
         // 接收客户端发来的信息
@@ -95,7 +94,7 @@ namespace Server
                     string message = Encoding.Unicode.GetString(receiveBytes, 0, receiveBytes.Length);
 
                     // 显示消息内容
-                    AddItemToListBox(string.Format("{0}:{1}",remoteIPEndPoint,message));
+                    AddItemToListBox(string.Format("{0}:{1}", remoteIPEndPoint, message));
 
                     // 处理消息数据
                     // 根据协议的设计部分，从客户端发送来的消息是具有一定格式的
@@ -133,15 +132,15 @@ namespace Server
                             {
                                 if (userList[i].GetName() == splitstring[1])
                                 {
-                                    AddItemToListBox(string.Format("用户{0}({1})退出",userList[i].GetName(),userList[i].GetIPEndPoint()));
+                                    AddItemToListBox(string.Format("用户{0}({1})退出", userList[i].GetName(), userList[i].GetIPEndPoint()));
                                     userList.RemoveAt(i); // 移除用户
                                 }
                             }
                             for (int i = 0; i < userList.Count; i++)
                             {
                                 // 广播注销消息
-                                MessageBox.Show("logout 发给 "+ userList[i].GetName());
-                                    SendtoClient(userList[i], message);
+                                //MessageBox.Show("logout 发给 "+ userList[i].GetName());
+                                SendtoClient(userList[i], message);
                             }
                             AddItemToListBox(string.Format("广播:[{0}]", message));
                             break;
@@ -162,11 +161,11 @@ namespace Server
             // 匿名方式发送
             sendUdpClient = new UdpClient();
             byte[] sendBytes = Encoding.Unicode.GetBytes(message);
-            IPEndPoint remoteIPEndPoint =user.GetIPEndPoint();
-            sendUdpClient.Send(sendBytes,sendBytes.Length,remoteIPEndPoint);
+            IPEndPoint remoteIPEndPoint = user.GetIPEndPoint();
+            sendUdpClient.Send(sendBytes, sendBytes.Length, remoteIPEndPoint);
             sendUdpClient.Close();
         }
-       
+
         // 接受客户端的连接
         private void ListenClientConnect()
         {
@@ -176,7 +175,7 @@ namespace Server
                 try
                 {
                     newClient = tcpListener.AcceptTcpClient();
-                    AddItemToListBox(string.Format("接受客户端{0}的TCP请求",newClient.Client.RemoteEndPoint));
+                    AddItemToListBox(string.Format("接受客户端{0}的TCP请求", newClient.Client.RemoteEndPoint));
                 }
                 catch
                 {
@@ -219,7 +218,7 @@ namespace Server
             btnStop.Enabled = false;
         }
 
-        
+
         private delegate void AddItemToListBoxDelegate(string message);
         /// <summary>
         /// 向ListBox中添加状态信息

@@ -65,7 +65,7 @@ namespace Client
             tcpListener = new TcpListener(IPAddress.Parse(txtLocalIP.Text), int.Parse(txtlocalport.Text) + 1);//端口直接使用上面udp的端口+1
             tcpListener.Start();
             // 启动TCP监听器
-            Thread listenThread = new Thread(listenTcpConnect);
+            Thread listenThread = new Thread(ListenTcpConnect);
             listenThread.Start();
 
 
@@ -94,7 +94,7 @@ namespace Client
 
                     // 处理消息
                     string[] splitstring = message.Split(',');
-                    MessageBox.Show(message);
+                    //MessageBox.Show(message);
 
                     switch (splitstring[0])
                     {
@@ -194,7 +194,7 @@ namespace Client
                         case "file":
                             if (chatFormList.Count == 0)
                             {
-                                
+
                                 for (int j = 0; j < lstviewOnlineUser.Items.Count; j++)
                                 {
                                     if (lstviewOnlineUser.Items[j].SubItems[1].Text == splitstring[2])
@@ -234,13 +234,13 @@ namespace Client
                 }
                 catch
                 {
-                    MessageBox.Show("ERROR!");
+                    //MessageBox.Show("ERROR!");
                     break;
                 }
             }
         }
 
-        private void listenTcpConnect()
+        private void ListenTcpConnect()
         {
             // 接受客户端的连接(传输文件)
             TcpClient newClient = null;
@@ -251,33 +251,9 @@ namespace Client
                     newClient = tcpListener.AcceptTcpClient();
                     if (newClient.Connected)
                     {
-                        if (MessageBox.Show("是否要接收文件？", "提示", MessageBoxButtons.OKCancel) == System.Windows.Forms.DialogResult.OK)
-                        {
-                            NetworkStream stream = newClient.GetStream();
-                            if (stream != null)
-                            {
-                                SaveFileDialog saveFileDialog = new SaveFileDialog();
-                                if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                                {
-                                    string fileSavePath = saveFileDialog.FileName;//获得用户保存文件的路径
-                                    FileStream fs = new FileStream(fileSavePath, FileMode.Create, FileAccess.Write);
-                                    int size = 0;
-                                    byte[] buffer = new byte[512];
-                                    while ((size = stream.Read(buffer, 0, buffer.Length)) > 0)
-                                    {
-                                        fs.Write(buffer, 0, size);
-                                    }
-                                    fs.Flush();
-                                    stream.Flush();
-                                    stream.Close();
-                                    newClient.Close();
-                                }
-                            }
-                        }
-                        else
-                        {
-                            newClient.Close();
-                        }
+                        Thread receiveFileThread = new Thread(new ParameterizedThreadStart(ReceiveFileThread));
+                        receiveFileThread.SetApartmentState(ApartmentState.STA);
+                        receiveFileThread.Start(newClient);
                     }
 
                     //AddItemToListBox(string.Format("接受客户端{0}的TCP请求", newClient.Client.RemoteEndPoint));
@@ -291,6 +267,41 @@ namespace Client
                 //Thread sendThread = new Thread(SendData);
                 //sendThread.Start(newClient);
             }
+        }
+
+        private void ReceiveFileThread(object fileClient)
+        {
+            TcpClient client = (TcpClient)fileClient;
+
+            if (MessageBox.Show("是否要接收文件？", "提示", MessageBoxButtons.OKCancel) == System.Windows.Forms.DialogResult.OK)
+            {
+                NetworkStream stream = client.GetStream();
+                if (stream != null)
+                {
+                    SaveFileDialog saveFileDialog = new SaveFileDialog();
+                    if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        string fileSavePath = saveFileDialog.FileName;//获得用户保存文件的路径
+                        FileStream fs = new FileStream(fileSavePath, FileMode.Create, FileAccess.Write);
+                        int size = 0;
+                        byte[] buffer = new byte[512];
+                        while ((size = stream.Read(buffer, 0, buffer.Length)) > 0)
+                        {
+                            fs.Write(buffer, 0, size);
+                        }
+                        MessageBox.Show("文件接收完毕！");
+                        fs.Flush();
+                        stream.Flush();
+                        stream.Close();
+                        client.Close();
+                    }
+                }
+            }
+            else
+            {
+                client.Close();
+            }
+
         }
 
         // 从服务器获取在线用户列表
