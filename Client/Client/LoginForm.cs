@@ -192,14 +192,15 @@ namespace Client
                             }
                             break;
                         case "file":
+                            MessageBox.Show(message);
                             if (chatFormList.Count == 0)
                             {
-
                                 for (int j = 0; j < lstviewOnlineUser.Items.Count; j++)
                                 {
+                                    MessageBox.Show(string.Format("chatFormList.Count == 0 循环{0} listusername:{1} fromuser:{2}  ",j, lstviewOnlineUser.Items[j].SubItems[1].Text, splitstring[2]));
                                     if (lstviewOnlineUser.Items[j].SubItems[1].Text == splitstring[2])
                                     {
-                                        //MessageBox.Show(splitstring[2] + "对话框未打开，自动打开接收文件");
+                                        MessageBox.Show(splitstring[2] + "对话框未打开，自动打开接收文件");
                                         showDialogChatToReceiveFile(lstviewOnlineUser.Items[j]);//打开对话框接收文件
                                         break;
                                     }
@@ -211,7 +212,7 @@ namespace Client
                                 {
                                     if (chatFormList[i].Text == splitstring[2])
                                     {
-                                        //MessageBox.Show(splitstring[2]+"对话框已经打开，接收文件");
+                                        MessageBox.Show(splitstring[2] + "对话框已经打开，接收文件");
                                         chatFormList[i].ShowTalkInfo(splitstring[2], splitstring[1], splitstring[3]);
                                         break;
                                     }
@@ -219,9 +220,10 @@ namespace Client
                                     {
                                         for (int j = 0; j < lstviewOnlineUser.Items.Count; j++)
                                         {
+                                            MessageBox.Show(string.Format("chatFormList.Count == 0 循环{0} listusername:{1} fromuser:{2}  ", j, lstviewOnlineUser.Items[j].SubItems[1].Text, splitstring[2]));
                                             if (lstviewOnlineUser.Items[j].SubItems[1].Text == splitstring[2])
                                             {
-                                                //MessageBox.Show(splitstring[2] + "对话框未打开，自动打开接收文件");
+                                                MessageBox.Show(splitstring[2] + "对话框未打开，自动打开接收文件");
                                                 showDialogChatToReceiveFile(lstviewOnlineUser.Items[j]);//打开对话框接收文件
                                                 break;
                                             }

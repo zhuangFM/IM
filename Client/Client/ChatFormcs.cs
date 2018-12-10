@@ -81,7 +81,7 @@ namespace Client
             {
                 filePath = openFileDialog.FileName;
                 // 匿名发送
-                sendUdpClient = new UdpClient(0);
+                sendUdpClient = new UdpClient();
                 // 启动发送线程
                 Thread sendThread = new Thread(SendMessage);
                 sendThread.Start(string.Format("file,{0},{1},{2}", DateTime.Now.ToLongTimeString(), selfUserName, selfUserName + "向你发送了文件"));
