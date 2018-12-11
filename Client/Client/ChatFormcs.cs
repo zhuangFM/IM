@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 // 添加额外命名空间
 using System.Net;
@@ -21,6 +15,7 @@ namespace Client
         public string peerUserName { get; set; }
         private IPEndPoint peerUserIPEndPoint;
         private UdpClient sendUdpClient;
+        private UdpClient receiveClinet;
 
         public ChatFormcs()
         {
@@ -82,28 +77,47 @@ namespace Client
                 filePath = openFileDialog.FileName;
                 // 匿名发送
                 sendUdpClient = new UdpClient();
+                Random random = new Random();
+                int receiveUpdClientPort = random.Next(1024, 65500);
+                //打开确认连接的UDP
+                receiveClinet = new UdpClient(new IPEndPoint(IPAddress.Parse("127.0.0.1"), receiveUpdClientPort));
+                Console.WriteLine("open file confirm udpclient port:: "+ receiveUpdClientPort);
                 // 启动发送线程
                 Thread sendThread = new Thread(SendMessage);
-                sendThread.Start(string.Format("file,{0},{1},{2}", DateTime.Now.ToLongTimeString(), selfUserName, selfUserName + "向你发送了文件"));
-                //启动TCP发送文件
-                TcpClient tcpClient = new TcpClient();
-                tcpClient.Connect(peerUserIPEndPoint.Address, peerUserIPEndPoint.Port + 1);
-                NetworkStream ns = tcpClient.GetStream();
-                FileStream fs = new FileStream(filePath, FileMode.Open);
-                int size = 0;//初始化读取的流量为0 
-                long len = 0;//初始化已经读取的流量   
-                while (len < fs.Length)
+                sendThread.Start(string.Format("file,{0},{1},{2},{3}", DateTime.Now.ToLongTimeString(), selfUserName, selfUserName + "向你发送了文件", receiveUpdClientPort));
+                if (ConfirmConn())
                 {
-                    byte[] buffer = new byte[512];
-                    size = fs.Read(buffer, 0, buffer.Length);
-                    ns.Write(buffer, 0, size);
-                    len += size;
+                    //启动TCP发送文件
+                    TcpClient tcpClient = new TcpClient();
+                    tcpClient.Connect(peerUserIPEndPoint.Address, peerUserIPEndPoint.Port + 1);
+                    NetworkStream ns = tcpClient.GetStream();
+                    FileStream fs = new FileStream(filePath, FileMode.Open);
+                    int size = 0;//初始化读取的流量为0 
+                    long len = 0;//初始化已经读取的流量   
+                    while (len < fs.Length)
+                    {
+                        byte[] buffer = new byte[512];
+                        size = fs.Read(buffer, 0, buffer.Length);
+                        ns.Write(buffer, 0, size);
+                        len += size;
+                    }
+                    fs.Flush();
+                    ns.Flush();
+                    fs.Close();
+                    ns.Close();
                 }
-                fs.Flush();
-                ns.Flush();
-                fs.Close();
-                ns.Close();
             }
+        }
+
+        private bool ConfirmConn()
+        {
+            IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
+            // 关闭receiveUdpClient时会产生异常
+            byte[] receiveBytes = receiveClinet.Receive(ref remoteIPEndPoint);
+            string message = Encoding.Unicode.GetString(receiveBytes, 0, receiveBytes.Length);
+            Console.WriteLine(string.Format("receive the confirm string is [{0}]",message));
+            receiveClinet.Close();
+            return message == "accept";
         }
     }
 }

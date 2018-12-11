@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 // 添加额外命名空间
@@ -13,7 +8,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
-using static System.Windows.Forms.ListView;
 
 namespace Client
 {
@@ -49,6 +43,7 @@ namespace Client
             txtusername.Text = "user" + random2.Next(100, 999);
             btnLogout.Enabled = false;
         }
+
 
         // 登录服务器
         private void btnlogin_Click(object sender, EventArgs e)
@@ -91,6 +86,7 @@ namespace Client
                     // 关闭receiveUdpClient时会产生异常
                     byte[] receiveBytes = receiveUdpClient.Receive(ref remoteIPEndPoint);
                     string message = Encoding.Unicode.GetString(receiveBytes, 0, receiveBytes.Length);
+                    
 
                     // 处理消息
                     string[] splitstring = message.Split(',');
@@ -192,51 +188,108 @@ namespace Client
                             }
                             break;
                         case "file":
-                            MessageBox.Show(message);
+                            //MessageBox.Show(message);
+                            Console.WriteLine("access file case");
                             if (chatFormList.Count == 0)
                             {
-                                for (int j = 0; j < lstviewOnlineUser.Items.Count; j++)
-                                {
-                                    MessageBox.Show(string.Format("chatFormList.Count == 0 循环{0} listusername:{1} fromuser:{2}  ",j, lstviewOnlineUser.Items[j].SubItems[1].Text, splitstring[2]));
-                                    if (lstviewOnlineUser.Items[j].SubItems[1].Text == splitstring[2])
+                                Console.WriteLine("chatfromlist.count=0;");
+                                Console.WriteLine(string.Format("lstviewOnlineUser.Items 's count :{0}", lstviewOnlineUser.Items.Count));
+                                foreach(ListViewItem item in lstviewOnlineUser.Items){
+                                    
+                                    Console.WriteLine(string.Format("chatFormList.Count == 0  listusername:{0} fromuser:{1}  ", item.SubItems[1].Text, splitstring[2]));
+                                    if (item.SubItems[1].Text == splitstring[2])
                                     {
-                                        MessageBox.Show(splitstring[2] + "对话框未打开，自动打开接收文件");
-                                        showDialogChatToReceiveFile(lstviewOnlineUser.Items[j]);//打开对话框接收文件
-                                        break;
+                                        Console.WriteLine(splitstring[2] + "对话框未打开，自动打开接收文件");
+                                        showDialogChatToReceiveFile(item);//打开对话框接收文件
+                                        //break;
                                     }
                                 }
+
+                                //for (int i = 0; i < lstviewOnlineUser.Items.Count; i++)
+                                //{
+                                //    Console.WriteLine(string.Format("chatFormList.Count == 0 循环{0} listusername:{1} fromuser:{2}  ", i, lstviewOnlineUser.Items[i].SubItems[1].Text, splitstring[2]));
+                                //    if (lstviewOnlineUser.Items[i].SubItems[1].Text == splitstring[2])
+                                //    {
+                                //        Console.WriteLine(splitstring[2] + "对话框未打开，自动打开接收文件");
+                                //        showDialogChatToReceiveFile(lstviewOnlineUser.Items[i]);//打开对话框接收文件
+                                //        //break;
+                                //    }
+                                //}
                             }
                             else
                             {
-                                for (int i = 0; i < chatFormList.Count; i++)
+                                Console.WriteLine("chatfromlist.count>0;");
+                                Console.WriteLine(string.Format("chatfromlist.count is {0};", chatFormList.Count));
+                                int cursor = 0;
+                                foreach(ChatFormcs item in chatFormList)
                                 {
-                                    if (chatFormList[i].Text == splitstring[2])
+                                    if (item.Text == splitstring[2])
                                     {
-                                        MessageBox.Show(splitstring[2] + "对话框已经打开，接收文件");
-                                        chatFormList[i].ShowTalkInfo(splitstring[2], splitstring[1], splitstring[3]);
+                                        Console.WriteLine(splitstring[2] + "对话框已经打开，接收文件");
+                                        item.ShowTalkInfo(splitstring[2], splitstring[1], splitstring[3]);
                                         break;
                                     }
-                                    if (i == chatFormList.Count - 1)
+                                    if (cursor == chatFormList.Count - 1)
                                     {
-                                        for (int j = 0; j < lstviewOnlineUser.Items.Count; j++)
+                                        foreach(ListViewItem listViewItem in lstviewOnlineUser.Items)
                                         {
-                                            MessageBox.Show(string.Format("chatFormList.Count == 0 循环{0} listusername:{1} fromuser:{2}  ", j, lstviewOnlineUser.Items[j].SubItems[1].Text, splitstring[2]));
-                                            if (lstviewOnlineUser.Items[j].SubItems[1].Text == splitstring[2])
+                                            Console.WriteLine(string.Format("chatFormList.Count == 0 listusername:{0} fromuser:{1}  ", listViewItem.SubItems[1].Text, splitstring[2]));
+                                            if (listViewItem.SubItems[1].Text == splitstring[2])
                                             {
-                                                MessageBox.Show(splitstring[2] + "对话框未打开，自动打开接收文件");
-                                                showDialogChatToReceiveFile(lstviewOnlineUser.Items[j]);//打开对话框接收文件
+                                                Console.WriteLine(splitstring[2] + "对话框未打开，自动打开接收文件");
+                                                showDialogChatToReceiveFile(listViewItem);//打开对话框接收文件
                                                 break;
                                             }
                                         }
+                                        //for (int j = 0; j < lstviewOnlineUser.Items.Count; j++)
+                                        //{
+                                        //    Console.WriteLine(string.Format("chatFormList.Count == 0 循环{0} listusername:{1} fromuser:{2}  ", j, lstviewOnlineUser.Items[j].SubItems[1].Text, splitstring[2]));
+                                        //    if (lstviewOnlineUser.Items[j].SubItems[1].Text == splitstring[2])
+                                        //    {
+                                        //        Console.WriteLine(splitstring[2] + "对话框未打开，自动打开接收文件");
+                                        //        showDialogChatToReceiveFile(lstviewOnlineUser.Items[j]);//打开对话框接收文件
+                                        //        break;
+                                        //    }
+                                        //}
                                     }
+                                    cursor++;
+                                }
+                                for (int i = 0; i < chatFormList.Count; i++)
+                                {
+                                    //if (chatFormList[i].Text == splitstring[2])
+                                    //{
+                                    //    Console.WriteLine(splitstring[2] + "对话框已经打开，接收文件");
+                                    //    chatFormList[i].ShowTalkInfo(splitstring[2], splitstring[1], splitstring[3]);
+                                    //    break;
+                                    //}
+                                    //if (i == chatFormList.Count - 1)
+                                    //{
+                                    //    for (int j = 0; j < lstviewOnlineUser.Items.Count; j++)
+                                    //    {
+                                    //        Console.WriteLine(string.Format("chatFormList.Count == 0 循环{0} listusername:{1} fromuser:{2}  ", j, lstviewOnlineUser.Items[j].SubItems[1].Text, splitstring[2]));
+                                    //        if (lstviewOnlineUser.Items[j].SubItems[1].Text == splitstring[2])
+                                    //        {
+                                    //            Console.WriteLine(splitstring[2] + "对话框未打开，自动打开接收文件");
+                                    //            showDialogChatToReceiveFile(lstviewOnlineUser.Items[j]);//打开对话框接收文件
+                                    //            break;
+                                    //        }
+                                    //    }
+                                    //}
                                 }
                             }
+                            //send flag and begin to receive the file;
+                            Console.WriteLine("file sender's updPort is " + splitstring[4]);
+                            UdpClient fileConfirmClient = new UdpClient();
+                            IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), int.Parse(splitstring[4]));
+                            byte[] sendbytes = Encoding.Unicode.GetBytes("accept");
+                            fileConfirmClient.Send(sendbytes, sendbytes.Length, iPEndPoint);
+                            fileConfirmClient.Close();
                             break;
                     }
                 }
                 catch
                 {
-                    //MessageBox.Show("ERROR!");
+                    Console.WriteLine("ERROR!");
                     break;
                 }
             }
