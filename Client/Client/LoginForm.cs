@@ -122,168 +122,10 @@ namespace Client
                             RemoveItemFromListView(splitstring[1]);
                             break;
                         case "talk":
-                            if (chatFormList.Count == 0)
-                            {
-                                for (int j = 0; j < lstviewOnlineUser.Items.Count; j++)
-                                {
-                                    if (lstviewOnlineUser.Items[j].SubItems[1].Text == splitstring[2])
-                                    {
-                                        List<Dictionary<string, string>> list = null;
-                                        Dictionary<string, string> dict = new Dictionary<string, string>();
-                                        if (unReadMsg.ContainsKey(splitstring[2]))
-                                        {
-                                            list = unReadMsg[splitstring[2]];
-                                            dict.Add("time", splitstring[1]);
-                                            dict.Add("content", splitstring[3]);
-                                            list.Add(dict);
-                                        }
-                                        else
-                                        {
-                                            list = new List<Dictionary<string, string>>();
-                                            dict.Add("time", splitstring[1]);
-                                            dict.Add("content", splitstring[3]);
-                                            list.Add(dict);
-                                            unReadMsg.Add(splitstring[2], list);
-                                        }
-                                        lstviewOnlineUser.Items[j].SubItems[0].Text = "有" + list.Count + "条未读消息！";
-                                        //break;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                for (int i = 0; i < chatFormList.Count; i++)
-                                {
-                                    //MessageBox.Show(chatFormList[i].Text);
-                                    if (chatFormList[i].Text == splitstring[2])
-                                    {
-                                        chatFormList[i].ShowTalkInfo(splitstring[2], splitstring[1], splitstring[3]);
-                                        break;
-                                    }
-                                    if (i == chatFormList.Count - 1)
-                                    {
-                                        for (int j = 0; j < lstviewOnlineUser.Items.Count; j++)
-                                        {
-                                            if (lstviewOnlineUser.Items[j].SubItems[1].Text == splitstring[2])
-                                            {
-                                                List<Dictionary<string, string>> list = null;
-                                                Dictionary<string, string> dict = new Dictionary<string, string>();
-                                                if (unReadMsg.ContainsKey(splitstring[2]))
-                                                {
-                                                    list = unReadMsg[splitstring[2]];
-                                                }
-                                                else
-                                                {
-                                                    list = new List<Dictionary<string, string>>();
-                                                }
-                                                dict.Add("time", splitstring[1]);
-                                                dict.Add("content", splitstring[3]);
-                                                list.Add(dict);
-                                                unReadMsg.Add(splitstring[2], list);
-                                                lstviewOnlineUser.Items[j].SubItems[0].Text = "有" + list.Count + "条未读消息！";
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            Talk(splitstring);
                             break;
                         case "file":
-                            //MessageBox.Show(message);
-                            Console.WriteLine("access file case");
-                            if (chatFormList.Count == 0)
-                            {
-                                Console.WriteLine("chatfromlist.count=0;");
-                                Console.WriteLine(string.Format("lstviewOnlineUser.Items 's count :{0}", lstviewOnlineUser.Items.Count));
-                                foreach(ListViewItem item in lstviewOnlineUser.Items){
-                                    
-                                    Console.WriteLine(string.Format("chatFormList.Count == 0  listusername:{0} fromuser:{1}  ", item.SubItems[1].Text, splitstring[2]));
-                                    if (item.SubItems[1].Text == splitstring[2])
-                                    {
-                                        Console.WriteLine(splitstring[2] + "对话框未打开，自动打开接收文件");
-                                        showDialogChatToReceiveFile(item);//打开对话框接收文件
-                                        //break;
-                                    }
-                                }
-
-                                //for (int i = 0; i < lstviewOnlineUser.Items.Count; i++)
-                                //{
-                                //    Console.WriteLine(string.Format("chatFormList.Count == 0 循环{0} listusername:{1} fromuser:{2}  ", i, lstviewOnlineUser.Items[i].SubItems[1].Text, splitstring[2]));
-                                //    if (lstviewOnlineUser.Items[i].SubItems[1].Text == splitstring[2])
-                                //    {
-                                //        Console.WriteLine(splitstring[2] + "对话框未打开，自动打开接收文件");
-                                //        showDialogChatToReceiveFile(lstviewOnlineUser.Items[i]);//打开对话框接收文件
-                                //        //break;
-                                //    }
-                                //}
-                            }
-                            else
-                            {
-                                Console.WriteLine("chatfromlist.count>0;");
-                                Console.WriteLine(string.Format("chatfromlist.count is {0};", chatFormList.Count));
-                                int cursor = 0;
-                                foreach(ChatFormcs item in chatFormList)
-                                {
-                                    if (item.Text == splitstring[2])
-                                    {
-                                        Console.WriteLine(splitstring[2] + "对话框已经打开，接收文件");
-                                        item.ShowTalkInfo(splitstring[2], splitstring[1], splitstring[3]);
-                                        break;
-                                    }
-                                    if (cursor == chatFormList.Count - 1)
-                                    {
-                                        foreach(ListViewItem listViewItem in lstviewOnlineUser.Items)
-                                        {
-                                            Console.WriteLine(string.Format("chatFormList.Count == 0 listusername:{0} fromuser:{1}  ", listViewItem.SubItems[1].Text, splitstring[2]));
-                                            if (listViewItem.SubItems[1].Text == splitstring[2])
-                                            {
-                                                Console.WriteLine(splitstring[2] + "对话框未打开，自动打开接收文件");
-                                                showDialogChatToReceiveFile(listViewItem);//打开对话框接收文件
-                                                break;
-                                            }
-                                        }
-                                        //for (int j = 0; j < lstviewOnlineUser.Items.Count; j++)
-                                        //{
-                                        //    Console.WriteLine(string.Format("chatFormList.Count == 0 循环{0} listusername:{1} fromuser:{2}  ", j, lstviewOnlineUser.Items[j].SubItems[1].Text, splitstring[2]));
-                                        //    if (lstviewOnlineUser.Items[j].SubItems[1].Text == splitstring[2])
-                                        //    {
-                                        //        Console.WriteLine(splitstring[2] + "对话框未打开，自动打开接收文件");
-                                        //        showDialogChatToReceiveFile(lstviewOnlineUser.Items[j]);//打开对话框接收文件
-                                        //        break;
-                                        //    }
-                                        //}
-                                    }
-                                    cursor++;
-                                }
-                                for (int i = 0; i < chatFormList.Count; i++)
-                                {
-                                    //if (chatFormList[i].Text == splitstring[2])
-                                    //{
-                                    //    Console.WriteLine(splitstring[2] + "对话框已经打开，接收文件");
-                                    //    chatFormList[i].ShowTalkInfo(splitstring[2], splitstring[1], splitstring[3]);
-                                    //    break;
-                                    //}
-                                    //if (i == chatFormList.Count - 1)
-                                    //{
-                                    //    for (int j = 0; j < lstviewOnlineUser.Items.Count; j++)
-                                    //    {
-                                    //        Console.WriteLine(string.Format("chatFormList.Count == 0 循环{0} listusername:{1} fromuser:{2}  ", j, lstviewOnlineUser.Items[j].SubItems[1].Text, splitstring[2]));
-                                    //        if (lstviewOnlineUser.Items[j].SubItems[1].Text == splitstring[2])
-                                    //        {
-                                    //            Console.WriteLine(splitstring[2] + "对话框未打开，自动打开接收文件");
-                                    //            showDialogChatToReceiveFile(lstviewOnlineUser.Items[j]);//打开对话框接收文件
-                                    //            break;
-                                    //        }
-                                    //    }
-                                    //}
-                                }
-                            }
-                            //send flag and begin to receive the file;
-                            Console.WriteLine("file sender's updPort is " + splitstring[4]);
-                            UdpClient fileConfirmClient = new UdpClient();
-                            IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), int.Parse(splitstring[4]));
-                            byte[] sendbytes = Encoding.Unicode.GetBytes("accept");
-                            fileConfirmClient.Send(sendbytes, sendbytes.Length, iPEndPoint);
-                            fileConfirmClient.Close();
+                            File(splitstring);
                             break;
                     }
                 }
@@ -310,7 +152,6 @@ namespace Client
                         receiveFileThread.SetApartmentState(ApartmentState.STA);
                         receiveFileThread.Start(newClient);
                     }
-
                     //AddItemToListBox(string.Format("接受客户端{0}的TCP请求", newClient.Client.RemoteEndPoint));
                 }
                 catch
@@ -434,6 +275,196 @@ namespace Client
                         lstviewOnlineUser.Items[i].Remove();
                     }
                 }
+            }
+        }
+
+        private delegate void TalkDelegate(string[] talkInfo);
+
+
+        private void Talk(string[] talkInfo)
+        {
+            if (this.InvokeRequired)
+            {
+                TalkDelegate talkDelegate = Talk;
+                this.Invoke(talkDelegate, new object[] { talkInfo });
+            }
+            else
+            {
+                if (chatFormList.Count == 0)
+                {
+                    for (int j = 0; j < lstviewOnlineUser.Items.Count; j++)
+                    {
+                        if (lstviewOnlineUser.Items[j].SubItems[1].Text == talkInfo[2])
+                        {
+                            List<Dictionary<string, string>> list = null;
+                            Dictionary<string, string> dict = new Dictionary<string, string>();
+                            if (unReadMsg.ContainsKey(talkInfo[2]))
+                            {
+                                list = unReadMsg[talkInfo[2]];
+                                dict.Add("time", talkInfo[1]);
+                                dict.Add("content", talkInfo[3]);
+                                list.Add(dict);
+                            }
+                            else
+                            {
+                                list = new List<Dictionary<string, string>>();
+                                dict.Add("time", talkInfo[1]);
+                                dict.Add("content", talkInfo[3]);
+                                list.Add(dict);
+                                unReadMsg.Add(talkInfo[2], list);
+                            }
+                            lstviewOnlineUser.Items[j].SubItems[0].Text = "有" + list.Count + "条未读消息！";
+                            //break;
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < chatFormList.Count; i++)
+                    {
+                        //MessageBox.Show(chatFormList[i].Text);
+                        if (chatFormList[i].Text == talkInfo[2])
+                        {
+                            chatFormList[i].ShowTalkInfo(talkInfo[2], talkInfo[1], talkInfo[3]);
+                            break;
+                        }
+                        if (i == chatFormList.Count - 1)
+                        {
+                            for (int j = 0; j < lstviewOnlineUser.Items.Count; j++)
+                            {
+                                if (lstviewOnlineUser.Items[j].SubItems[1].Text == talkInfo[2])
+                                {
+                                    List<Dictionary<string, string>> list = null;
+                                    Dictionary<string, string> dict = new Dictionary<string, string>();
+                                    if (unReadMsg.ContainsKey(talkInfo[2]))
+                                    {
+                                        list = unReadMsg[talkInfo[2]];
+                                    }
+                                    else
+                                    {
+                                        list = new List<Dictionary<string, string>>();
+                                    }
+                                    dict.Add("time", talkInfo[1]);
+                                    dict.Add("content", talkInfo[3]);
+                                    list.Add(dict);
+                                    unReadMsg.Add(talkInfo[2], list);
+                                    lstviewOnlineUser.Items[j].SubItems[0].Text = "有" + list.Count + "条未读消息！";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private delegate void FileDelegate(string[] talkInfo);
+
+        private void File(string[] talkInfo)
+        {
+            if (this.InvokeRequired)
+            {
+                FileDelegate fileDelegate = File;
+                this.Invoke(fileDelegate, new object[] { talkInfo });
+            }
+            else
+            {
+                //MessageBox.Show(message);
+                Console.WriteLine("access file case");
+                if (chatFormList.Count == 0)
+                {
+                    Console.WriteLine("chatfromlist.count=0;");
+                    Console.WriteLine(string.Format("lstviewOnlineUser.Items 's count :{0}", lstviewOnlineUser.Items.Count));
+                    foreach (ListViewItem item in lstviewOnlineUser.Items)
+                    {
+
+                        Console.WriteLine(string.Format("chatFormList.Count == 0  listusername:{0} fromuser:{1}  ", item.SubItems[1].Text, talkInfo[2]));
+                        if (item.SubItems[1].Text == talkInfo[2])
+                        {
+                            Console.WriteLine(talkInfo[2] + "对话框未打开，自动打开接收文件");
+                            showDialogChatToReceiveFile(item);//打开对话框接收文件
+                                                              //break;
+                        }
+                    }
+
+                    //for (int i = 0; i < lstviewOnlineUser.Items.Count; i++)
+                    //{
+                    //    Console.WriteLine(string.Format("chatFormList.Count == 0 循环{0} listusername:{1} fromuser:{2}  ", i, lstviewOnlineUser.Items[i].SubItems[1].Text, splitstring[2]));
+                    //    if (lstviewOnlineUser.Items[i].SubItems[1].Text == splitstring[2])
+                    //    {
+                    //        Console.WriteLine(splitstring[2] + "对话框未打开，自动打开接收文件");
+                    //        showDialogChatToReceiveFile(lstviewOnlineUser.Items[i]);//打开对话框接收文件
+                    //        //break;
+                    //    }
+                    //}
+                }
+                else
+                {
+                    Console.WriteLine("chatfromlist.count>0;");
+                    Console.WriteLine(string.Format("chatfromlist.count is {0};", chatFormList.Count));
+                    int cursor = 0;
+                    foreach (ChatFormcs item in chatFormList)
+                    {
+                        if (item.Text == talkInfo[2])
+                        {
+                            Console.WriteLine(talkInfo[2] + "对话框已经打开，接收文件");
+                            item.ShowTalkInfo(talkInfo[2], talkInfo[1], talkInfo[3]);
+                            break;
+                        }
+                        if (cursor == chatFormList.Count - 1)
+                        {
+                            foreach (ListViewItem listViewItem in lstviewOnlineUser.Items)
+                            {
+                                Console.WriteLine(string.Format("chatFormList.Count == 0 listusername:{0} fromuser:{1}  ", listViewItem.SubItems[1].Text, talkInfo[2]));
+                                if (listViewItem.SubItems[1].Text == talkInfo[2])
+                                {
+                                    Console.WriteLine(talkInfo[2] + "对话框未打开，自动打开接收文件");
+                                    showDialogChatToReceiveFile(listViewItem);//打开对话框接收文件
+                                    break;
+                                }
+                            }
+                            //for (int j = 0; j < lstviewOnlineUser.Items.Count; j++)
+                            //{
+                            //    Console.WriteLine(string.Format("chatFormList.Count == 0 循环{0} listusername:{1} fromuser:{2}  ", j, lstviewOnlineUser.Items[j].SubItems[1].Text, splitstring[2]));
+                            //    if (lstviewOnlineUser.Items[j].SubItems[1].Text == splitstring[2])
+                            //    {
+                            //        Console.WriteLine(splitstring[2] + "对话框未打开，自动打开接收文件");
+                            //        showDialogChatToReceiveFile(lstviewOnlineUser.Items[j]);//打开对话框接收文件
+                            //        break;
+                            //    }
+                            //}
+                        }
+                        cursor++;
+                    }
+                    for (int i = 0; i < chatFormList.Count; i++)
+                    {
+                        //if (chatFormList[i].Text == splitstring[2])
+                        //{
+                        //    Console.WriteLine(splitstring[2] + "对话框已经打开，接收文件");
+                        //    chatFormList[i].ShowTalkInfo(splitstring[2], splitstring[1], splitstring[3]);
+                        //    break;
+                        //}
+                        //if (i == chatFormList.Count - 1)
+                        //{
+                        //    for (int j = 0; j < lstviewOnlineUser.Items.Count; j++)
+                        //    {
+                        //        Console.WriteLine(string.Format("chatFormList.Count == 0 循环{0} listusername:{1} fromuser:{2}  ", j, lstviewOnlineUser.Items[j].SubItems[1].Text, splitstring[2]));
+                        //        if (lstviewOnlineUser.Items[j].SubItems[1].Text == splitstring[2])
+                        //        {
+                        //            Console.WriteLine(splitstring[2] + "对话框未打开，自动打开接收文件");
+                        //            showDialogChatToReceiveFile(lstviewOnlineUser.Items[j]);//打开对话框接收文件
+                        //            break;
+                        //        }
+                        //    }
+                        //}
+                    }
+                }
+                //send flag and begin to receive the file;
+                Console.WriteLine("file sender's updPort is " + talkInfo[4]);
+                UdpClient fileConfirmClient = new UdpClient();
+                IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), int.Parse(talkInfo[4]));
+                byte[] sendbytes = Encoding.Unicode.GetBytes("accept");
+                fileConfirmClient.Send(sendbytes, sendbytes.Length, iPEndPoint);
+                fileConfirmClient.Close();
             }
         }
 
